@@ -32,37 +32,26 @@ jobs:
           port: 22
           script: |
             cd ~/pankb-mcp
-            touch mcp_server/.env
-            echo $"## Do not put this file under version control!" > .env
-            echo "" >> .env
-            echo "## Server type, values = ('dev' for the DEV server, 'prod' for the PROD servers)" >> .env
-            echo PROJECT_SERVER="prod" >> .env
-            echo "" >> .env
-            echo "## OPENAI_API_KEY" >> .env
-            echo OPENAI_API_KEY="${{secrets.OPENAI_API_KEY}}" >> .env
-            echo "" >> .env
-            echo "## MCP_API_KEY" >> .env
-            echo MCP_API_KEY="${{secrets.MCP_API_KEY}}" >> .env
-            echo "" >> .env
-            echo "## MongoDB Connection" >> .env           
-            echo MONGODB_PANKB_CONN_STRING="${{secrets.MONGODB_PANKB_CONN_STRING}}" >> .env
-            echo MONGODB_VECTOR_CONN_STRING="${{secrets.MONGODB_VECTOR_CONN_STRING}}" >> .env
-            echo "" >> .env
+
+            # Create mcp_server/.env
+            cat > mcp_server/.env << EOF
+            MCP_API_KEY=${{secrets.MCP_API_KEY}}
+            MONGODB_NAME=${{secrets.MONGODB_NAME}}
+            MONGODB_PANKB_CONN_STRING=${{secrets.MONGODB_PANKB_CONN_STRING}}
+            MONGODB_VECTOR_CONN_STRING=${{secrets.MONGODB_VECTOR_CONN_STRING}}
+            EOF
+            echo "=== mcp_server/.env ==="
             cat mcp_server/.env
-            touch ai_client/.env
-            echo "## Server type, values = ('dev' for the DEV server, 'prod' for the PROD servers)" >> .env
-            echo PROJECT_SERVER="prod" >> .env
-            echo "" >> .env
-            echo "## OPENAI_API_KEY" >> .env
-            echo OPENAI_API_KEY="${{secrets.OPENAI_API_KEY}}" >> .env
-            echo "" >> .env
-            echo "## MCP_API_KEY" >> .env
-            echo MCP_API_KEY="${{secrets.MCP_API_KEY}}" >> .env
-            echo "" >> .env
-            echo "## MCP_SERVER_URL" >> .env
-            echo MCP_SERVER_URL="${{secrets.MCP_SERVER_URL}}" >> .env            
-            echo "" >> .env
+
+            # Create ai_client/.env
+            cat > ai_client/.env << EOF
+            OPENAI_API_KEY=${{secrets.OPENAI_API_KEY}}
+            MCP_API_KEY=${{secrets.MCP_API_KEY}}
+            MCP_SERVER_URL=${{secrets.MCP_SERVER_URL}}
+            EOF
+            echo "=== ai_client/.env ==="
             cat ai_client/.env
+
             docker compose down
             docker compose up -d --build --force-recreate --remove-orphans
             docker system prune --all --force
