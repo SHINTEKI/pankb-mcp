@@ -42,9 +42,6 @@ To address this, we developed an MCP (Model Context Protocol) server that expose
 | `plot_phylon_heatmap` | Phylon weight heatmap for genomes |
 
 
-## Key Designs
-1. publish 
-
 
 ## Connection 
 1. http://pankb-preprod.northeurope.cloudapp.azure.com/ai_assistant/ (limited to DTU IPs)
