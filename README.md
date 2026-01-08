@@ -41,13 +41,9 @@ To address this, we developed an MCP (Model Context Protocol) server that expose
 | `plot_pangenome_openness` | Open/Closed pangenome status comparison |
 | `plot_phylon_heatmap` | Phylon weight heatmap for genomes |
 
-## Technical Design Highlights
-1. **Modular Architecture**: Uses FastMCP's mount mechanism to organize tools into separate modules (query, chart, analysis, RAG), enabling clean code separation and easy maintenance
-2. **Dual Access Points**: Supports both Streamlit web interface (with OpenAI LLM) and direct MCP client connection (Claude Desktop, ChatGPT, etc.)
-3. **Bearer Token Authentication**: Simple but effective API key protection via middleware, configurable through environment variables
-4. **Docker Containerization**: Server and client are containerized separately with docker-compose orchestration for easy deployment
-5. **Real-time Data Access**: Direct connection to MongoDB for live PanKB data queries and Azure Blob Storage for file resources
 
+## Key Designs
+1. publish 
 
 
 ## Connection 
@@ -55,11 +51,11 @@ To address this, we developed an MCP (Model Context Protocol) server that expose
 2. claude_desktop_config.json
 
 
-## To-do list:
+## Roadmap
 
 - [x] initialize codebase, use uv for env control, follow microservice structure to separate server and client apps into two directories, but track them using one repo 
 - [x] write tools based on research papers, design tool categories
-- [ ] transfer previous RAG to current tools
+- [ ] reuse previous RAG and add to tools
 - [ ] design and write resources (optional)
 - [ ] design and write prompts 
 - [x] write server app using FastMCP and uvicorn (to enable hot-reload for development), mount all server-side components
