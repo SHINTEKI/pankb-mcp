@@ -1,0 +1,15 @@
+[project]
+name = "ai-client"
+version = "0.1.0"
+description = "AI Client with MCP tools integration"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastmcp>=2.14.1",
+    "openai>=1.0.0",
+    "streamlit>=1.40.0",
+    "python-dotenv>=1.0.0",
+    "langchain-mcp-adapters>=0.1.0",
+    "langchain-openai>=0.3.0",
+    "langgraph>=0.2.0",
+]
