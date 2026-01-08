@@ -1,0 +1,68 @@
+name: Deploy the prod branch code to an Azure Virtual Machine
+
+on:
+  push:
+    branches: [ prod ]
+
+jobs:
+  deployment:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Copy files using SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.MCP_PROD_HOST_VNET }}
+          username: ${{ secrets.MCP_PROD_SSH_USERNAME }}
+          key: ${{ secrets.MCP_PROD_PRIVATE_SSH_KEY }}
+          source: "."
+          target: "~/pankb-mcp"
+  
+      - name: Create the .env file and (re-)start containers over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.MCP_PROD_HOST_VNET }}
+          username: ${{ secrets.MCP_PROD_SSH_USERNAME }}
+          key: ${{ secrets.MCP_PROD_PRIVATE_SSH_KEY }}
+          port: 22
+          script: |
+            cd ~/pankb-mcp
+            touch mcp_server/.env
+            echo $"## Do not put this file under version control!" > .env
+            echo "" >> .env
+            echo "## Server type, values = ('dev' for the DEV server, 'prod' for the PROD servers)" >> .env
+            echo PROJECT_SERVER="prod" >> .env
+            echo "" >> .env
+            echo "## OPENAI_API_KEY" >> .env
+            echo OPENAI_API_KEY="${{secrets.OPENAI_API_KEY}}" >> .env
+            echo "" >> .env
+            echo "## MCP_API_KEY" >> .env
+            echo MCP_API_KEY="${{secrets.MCP_API_KEY}}" >> .env
+            echo "" >> .env
+            echo "## MongoDB Connection" >> .env           
+            echo MONGODB_PANKB_CONN_STRING="${{secrets.MONGODB_PANKB_CONN_STRING}}" >> .env
+            echo MONGODB_VECTOR_CONN_STRING="${{secrets.MONGODB_VECTOR_CONN_STRING}}" >> .env
+            echo "" >> .env
+            cat mcp_server/.env
+            touch ai_client/.env
+            echo "## Server type, values = ('dev' for the DEV server, 'prod' for the PROD servers)" >> .env
+            echo PROJECT_SERVER="prod" >> .env
+            echo "" >> .env
+            echo "## OPENAI_API_KEY" >> .env
+            echo OPENAI_API_KEY="${{secrets.OPENAI_API_KEY}}" >> .env
+            echo "" >> .env
+            echo "## MCP_API_KEY" >> .env
+            echo MCP_API_KEY="${{secrets.MCP_API_KEY}}" >> .env
+            echo "" >> .env
+            echo "## MCP_SERVER_URL" >> .env
+            echo MCP_SERVER_URL="${{secrets.MCP_SERVER_URL}}" >> .env            
+            echo "" >> .env
+            cat ai_client/.env
+            docker compose down
+            docker compose up -d --build --force-recreate --remove-orphans
+            docker system prune --all --force
