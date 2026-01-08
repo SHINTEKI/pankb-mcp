@@ -8,10 +8,12 @@ wheels/
 
 # Virtual environments
 **/.venv/
+**/.env
+
+# Folders and documents to ignore
 .claude
 llm.txt
-
-**/.env
 logs
 tree.txt
 llm.txt
+docs/
