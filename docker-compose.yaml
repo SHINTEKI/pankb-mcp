@@ -1,3 +1,8 @@
+networks:
+  mcp-net:
+    name: mcp-net
+    external: false
+
 services:
   mcp-server:
     container_name: mcp-server
@@ -5,6 +10,8 @@ services:
       context: .
       dockerfile: server.Dockerfile
     image: server:latest
+    networks:
+      - mcp-net
     ports:
       - "8000:8000"
     env_file:
@@ -19,6 +26,8 @@ services:
       context: .
       dockerfile: client.Dockerfile
     image: client:latest
+    networks:
+      - mcp-net
     ports:
       - "8501:8501"
     env_file:

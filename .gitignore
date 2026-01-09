@@ -16,3 +16,6 @@ llm.txt
 logs
 tree.txt
 llm.txt
+
+# PostgreSQL data directory
+sqldb/data/

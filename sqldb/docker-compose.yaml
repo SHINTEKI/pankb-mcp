@@ -1,0 +1,21 @@
+networks:
+  mcp-net:
+    name: mcp-net
+    external: true
+    
+services:
+  sqldb:
+    container_name: sqldb
+    image: postgres:16
+    restart: unless-stopped
+    shm_size: 128mb
+    env_file:
+      - .env
+    networks:
+      - mcp-net
+    ports:
+      - 5432:5432
+    volumes:
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+      - ./data:/var/lib/postgresql/data
+
